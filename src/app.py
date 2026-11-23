@@ -10,6 +10,7 @@ from typing import Literal
 import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 MODEL_PATH = Path(__file__).resolve().parent.parent / "model.joblib"
@@ -35,6 +36,12 @@ class Passenger(BaseModel):
     sex: Literal["male", "female"]
     age: float | None = Field(default=None, ge=0, le=120)  # missing age is allowed
     fare: float = Field(ge=0)
+
+
+@app.get("/", include_in_schema=False)
+def home():
+    """Send visitors to the interactive documentation page."""
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/health")
