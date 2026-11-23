@@ -1,0 +1,10 @@
+# Versions tested together with Python 3.11
+pandas==3.1.1
+scikit-learn==1.9.1
+joblib==1.6.0
+mlflow==3.18.0
+fastapi==0.165.0
+uvicorn==0.54.0
+pydantic==2.14.4
+pytest==9.2.0
+httpx==0.28.1   # required by FastAPI's TestClient

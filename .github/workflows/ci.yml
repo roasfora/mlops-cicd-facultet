@@ -1,0 +1,52 @@
+name: CI
+
+# When does this workflow run?
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:   # "Run workflow" button in the Actions tab
+
+# Least privilege: the workflow may only read the repository contents.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip   # reuse downloaded packages between runs
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # model.joblib is not stored in Git, so we train it here.
+      - name: Train model
+        run: python src/train.py
+
+      # Any failing test makes the step (and the whole workflow) fail.
+      - name: Run data tests
+        run: python -m pytest tests/test_data.py -v
+
+      - name: Run model tests
+        run: python -m pytest tests/test_model.py -v
+
+      - name: Run API tests
+        run: python -m pytest tests/test_api.py -v
+
+      # Upload ONLY the model (not mlruns/ or other temporary files).
+      - name: Upload trained model
+        uses: actions/upload-artifact@v7
+        with:
+          name: model
+          path: model.joblib
+          if-no-files-found: error

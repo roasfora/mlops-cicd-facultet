@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Generated artifacts (recreated by `make train`)
+model.joblib
+mlruns/
+mlflow.db
+mlartifacts/
+
+# Secrets / environment
+.env
+*.env
+.DS_Store
+.vscode/
